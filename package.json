@@ -1,0 +1,25 @@
+{
+  "name": "vue-intlify-block-translator",
+  "version": "0.0.1",
+  "description": "Add and update translations in your Vue SFC intlify blocks",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node index.ts ./sample french --env-file=.env"
+  },
+  "keywords": [],
+  "author": "aleksanderwalczuk",
+  "repository": {
+    "url": "https://github.com/aleksanderwalczuk/vue-intlify-block-translator/"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "*",
+    "openai": "^4.57.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
