@@ -8,7 +8,7 @@ import { inject } from "./inject";
 
 const srcDir: string = path.resolve(process.argv[2]);
 const lang: string = process.argv[3];
-const env = dotenv.config();
+dotenv.config();
 
 // Function to recursively get all .vue files
 const getVueFiles = async (dir: string): Promise<string[]> => {
@@ -79,7 +79,7 @@ filterVueFiles()
 
         const i18nContent = extractI18nContent(content)!;
 
-        const message = await translate(i18nContent, {
+        const { message } = await translate(i18nContent, {
           client: aiClient,
           lang,
         });
