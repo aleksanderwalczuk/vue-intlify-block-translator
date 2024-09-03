@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import { extractI18nContent } from "./extract";
 import { translate } from "./translate";
 import { inject } from "./inject";
+import { batch } from "./batch";
 
 const srcDir: string = path.resolve(process.argv[2]);
 const lang: string = process.argv[3];
@@ -70,27 +71,34 @@ filterVueFiles()
      * Should handle extra timeouts to satisfy OpenAI rate limiting
      * https://platform.openai.com/docs/guides/rate-limits/free-tier-rate-limits
      */
-    await Promise.all(
-      filesContents.map(async (content, index) => {
-        const filePath = filteredFiles[index];
 
-        console.log("file to process");
-        console.log(filePath);
+    const processFile = async (content: string, index: number) => {
+      const filePath = filteredFiles[index];
 
-        const i18nContent = extractI18nContent(content)!;
+      console.log("file to process");
+      console.log(filePath);
 
-        const { message } = await translate(i18nContent, {
-          client: aiClient,
-          lang,
-        });
+      const i18nContent = extractI18nContent(content)!;
 
-        if (message == null) {
-          console.log("Skipping: " + filePath);
-          return;
-        }
+      const { message, limits } = await translate(i18nContent, {
+        client: aiClient,
+        lang,
+      });
 
-        await inject(message, { filePath, content }, lang);
-      })
+      if (message == null) {
+        console.log("Skipping: " + filePath);
+        return;
+      }
+
+      await inject(message, { filePath, content }, lang);
+
+      return limits;
+    };
+
+    await batch(
+      filesContents.map((content, index) => () => processFile(content, index)),
+      1,
+      45 * 1000
     );
   })
   .catch((error) => {
