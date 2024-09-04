@@ -12,9 +12,9 @@ export const translate = async (
         {
           role: "system",
           content:
-            "Return only yaml content and match provided schema. Do not return provided input. Make sure that expected answer is in requested language which is " +
+            "Return only yaml content and match provided schema. Do not return provided input. Input may contain one or more languages which are not the required language. Make sure that expected answer is in requested language which is " +
             lang +
-            ". Do not translate schema keys, they are immutable. Only values should be translated to requested langauage. Otherwise return an error comment and provide a reason",
+            ". Do not translate schema keys, they are immutable. Only values should be translated to requested langauage. Otherwise return an error comment and provide a reason. Always start an error comment with # Error - Automated translation error - ",
         },
         { content, role: "user" },
       ],

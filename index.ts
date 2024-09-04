@@ -87,8 +87,10 @@ filterVueFiles()
 
       if (message == null) {
         console.log("Skipping: " + filePath);
-        return;
+        return null;
       }
+
+      //TODO: Should check for error message
 
       await inject(message, { filePath, content }, lang);
 
@@ -97,7 +99,7 @@ filterVueFiles()
 
     await batch(
       filesContents.map((content, index) => () => processFile(content, index)),
-      1,
+      2,
       45 * 1000
     );
   })
