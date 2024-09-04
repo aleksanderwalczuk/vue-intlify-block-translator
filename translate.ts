@@ -1,29 +1,5 @@
 import { type OpenAI } from "openai";
-import { Headers } from "openai/_shims/node-types.mjs";
-
-const getRateLimitHeaders = (headers: Headers) => {
-  const rateLimitHeaders = [
-    "x-ratelimit-remaining-tokens",
-    "x-ratelimit-remaining-requests",
-    "x-ratelimit-reset-tokens",
-    "x-ratelimit-reset-requests",
-  ];
-  /**
-   * Sample response:
-   * {
-   *  "remaining-tokens":"59905",
-   *  "remaining-requests":"197",
-   *  "reset-tokens":"95ms",
-   *  "reset-requests":"21m35.083s"
-   * }
-   */
-  return Object.fromEntries(
-    rateLimitHeaders.map((key) => [
-      key.slice("x-ratelimit-".length),
-      headers.get(key),
-    ])
-  );
-};
+import { extractRateLimitHeaders } from "./extract";
 
 export const translate = async (
   content: string,
@@ -50,7 +26,7 @@ export const translate = async (
 
   const [choice] = response.data.choices;
 
-  const rateLimits = getRateLimitHeaders(response.response.headers);
+  const rateLimits = extractRateLimitHeaders(response.response.headers);
 
   if (choice.finish_reason !== "stop") {
     throw new Error("Something went wrong," + choice.message.refusal);
